@@ -7,7 +7,7 @@ This uses the ShipCrews database (scripts in OwnTests\ShipCrews\SQL).
 Note: EF requires any handled value to have a primary key (i.e. CrewAssignments could not use a composite primary key made of the fks).
 
 1) ASP.NET Core Web api
-	note Enable OpenAPI support is ticked
+	note "Enable OpenAPI support" is ticked
 
 2. Nuget:
 	a) Microsoft.EntityFrameworkCore.Tools
@@ -24,3 +24,5 @@ Note: EF requires any handled value to have a primary key (i.e. CrewAssignments 
 	API Controller - Empty (PeopleController)
 
 6) Populate PeopleController
+
+...
