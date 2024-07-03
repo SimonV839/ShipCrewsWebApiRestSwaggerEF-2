@@ -33,7 +33,7 @@ public partial class ShipCrewsContext : DbContext
     {
         modelBuilder.Entity<Crew>(entity =>
         {
-            entity.HasKey(e => e.CrewId).HasName("PK__Crews__89BCFC29737C8540");
+            entity.HasKey(e => e.CrewId).HasName("PK__Crews__89BCFC294DCBC610");
 
             entity.Property(e => e.CrewId).ValueGeneratedNever();
             entity.Property(e => e.Name)
@@ -43,15 +43,15 @@ public partial class ShipCrewsContext : DbContext
 
         modelBuilder.Entity<CrewAssignment>(entity =>
         {
-            entity.HasNoKey();
+            entity.HasKey(e => e.Id).HasName("PK__CrewAssi__3214EC076CBB95A3");
 
             entity.HasIndex(e => new { e.CrewId, e.PersonId }, "CK_CrewAssignments_Unique").IsUnique();
 
-            entity.HasOne(d => d.Crew).WithMany()
+            entity.HasOne(d => d.Crew).WithMany(p => p.CrewAssignments)
                 .HasForeignKey(d => d.CrewId)
                 .HasConstraintName("FK__CrewAssig__CrewI__3F466844");
 
-            entity.HasOne(d => d.Person).WithMany()
+            entity.HasOne(d => d.Person).WithMany(p => p.CrewAssignments)
                 .HasForeignKey(d => d.PersonId)
                 .HasConstraintName("FK__CrewAssig__Perso__403A8C7D");
         });
@@ -68,7 +68,7 @@ public partial class ShipCrewsContext : DbContext
 
         modelBuilder.Entity<Person>(entity =>
         {
-            entity.HasKey(e => e.PersonId).HasName("PK__People__AA2FFBE519179691");
+            entity.HasKey(e => e.PersonId).HasName("PK__People__AA2FFBE52719AECD");
 
             entity.Property(e => e.PersonId).ValueGeneratedNever();
             entity.Property(e => e.FirstName).HasMaxLength(50);
@@ -76,12 +76,12 @@ public partial class ShipCrewsContext : DbContext
 
             entity.HasOne(d => d.Role).WithMany(p => p.People)
                 .HasForeignKey(d => d.RoleId)
-                .HasConstraintName("FK__People__RoleId__412EB0B6");
+                .HasConstraintName("FK__People__RoleId__3B75D760");
         });
 
         modelBuilder.Entity<Role>(entity =>
         {
-            entity.HasKey(e => e.RoleId).HasName("PK__Roles__8AFACE1A9B0E8F35");
+            entity.HasKey(e => e.RoleId).HasName("PK__Roles__8AFACE1A87B6C17A");
 
             entity.Property(e => e.RoleId).ValueGeneratedNever();
             entity.Property(e => e.Name)

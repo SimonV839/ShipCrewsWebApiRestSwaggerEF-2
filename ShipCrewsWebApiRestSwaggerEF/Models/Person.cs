@@ -13,5 +13,7 @@ public partial class Person
 
     public int? RoleId { get; set; }
 
+    public virtual ICollection<CrewAssignment> CrewAssignments { get; set; } = new List<CrewAssignment>();
+
     public virtual Role? Role { get; set; }
 }
