@@ -17,13 +17,8 @@
     <PackageReference Include="Serilog.Enrichers.Process" Version="3.0.0" />
     <PackageReference Include="Serilog.Sinks.Console" Version="6.0.0" />
     <PackageReference Include="Serilog.Sinks.File" Version="6.0.0" />
+    <PackageReference Include="Simon839.LoggingHelpers" Version="1.0.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="LoggingHelpers">
-      <HintPath>..\..\LoggingHelpers\LoggingHelpers\bin\Debug\net8.0\LoggingHelpers.dll</HintPath>
-    </Reference>
   </ItemGroup>
 
 </Project>
