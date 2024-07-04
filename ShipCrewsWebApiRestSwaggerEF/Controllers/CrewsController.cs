@@ -6,37 +6,38 @@ namespace ShipCrewsWebApiRestSwaggerEF.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class CrewsController : ControllerBase
+    public class CrewsController : ShipCrewsControllerBase<CrewsController>
     {
-        private readonly ShipCrewsContext _context;
-
-        public CrewsController(ShipCrewsContext context)
+        public CrewsController(ILogger<CrewsController> logger, ShipCrewsContext context)
+            : base(logger, context)
         {
-            _context = context;
         }
 
         // Get : api/Crews
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Crew>>> GetCrew()
         {
-            if (_context.Crews == null)
+            if (Context.Crews == null)
             {
+                Logger.LogError("{func} called but there is no {table} table", nameof(GetCrew), nameof(Context.Crews));
                 return NotFound();
             }
-            return await _context.Crews.ToListAsync();
+            return await Context.Crews.ToListAsync();
         }
 
         // Get : api/Crews/2
         [HttpGet("{id}")]
         public async Task<ActionResult<Crew>> GetCrew(int id)
         {
-            if (_context.Crews is null)
+            if (Context.Crews is null)
             {
+                Logger.LogError("{func} called with {id} but there is no {table} table", nameof(GetCrew), id, nameof(Context.Crews));
                 return NotFound();
             }
-            var crew = await _context.Crews.FindAsync(id);
+            var crew = await Context.Crews.FindAsync(id);
             if (crew is null)
             {
+                Logger.LogInformation("{func} called with {id} but this is not present in {table} table", nameof(GetCrew), id, nameof(Context.Crews));
                 return NotFound();
             }
             return crew;
@@ -46,8 +47,8 @@ namespace ShipCrewsWebApiRestSwaggerEF.Controllers
         [HttpPost]
         public async Task<ActionResult<Crew>> PostCrew(Crew crew)
         {
-            _context.Crews.Add(crew);
-            await _context.SaveChangesAsync();
+            Context.Crews.Add(crew);
+            await Context.SaveChangesAsync();
             return CreatedAtAction(nameof(PostCrew), new { id = crew.CrewId }, crew);
         }
 
@@ -57,16 +58,21 @@ namespace ShipCrewsWebApiRestSwaggerEF.Controllers
         {
             if (id != crew.CrewId)
             {
+                Logger.LogError("{func} called with {id} but this does match the value supplied in {crew}", nameof(PutCrew), id, crew);
                 return BadRequest();
             }
-            _context.Entry(crew).State = EntityState.Modified;
+            Context.Entry(crew).State = EntityState.Modified;
             try
             {
-                await _context.SaveChangesAsync();
+                await Context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!CrewExists(id)) { return NotFound(); }
+                if (!CrewExists(id)) 
+                {
+                    Logger.LogWarning("{func} called with {id} but an item with this id does not exist", nameof(PutCrew), id);
+                    return NotFound(); 
+                }
                 else { throw; }
             }
             return NoContent();
@@ -76,22 +82,25 @@ namespace ShipCrewsWebApiRestSwaggerEF.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<Crew>> DeleteCrew(int id)
         {
-            if (_context.Crews is null)
+            if (Context.Crews is null)
             {
+                Logger.LogError("{func} called with {id} but there is no {table} table", nameof(DeleteCrew), id, nameof(Context.Crews));
                 return NotFound();
             }
-            var crew = await _context.Crews.FindAsync(id);
+            var crew = await Context.Crews.FindAsync(id);
             if (crew is null)
             {
+                Logger.LogWarning("{func} called with {id} but an item with this id does not exist", nameof(DeleteCrew), id);
                 return NotFound();
             }
-            _context.Crews.Remove(crew);
-            await _context.SaveChangesAsync();
+            Context.Crews.Remove(crew);
+            await Context.SaveChangesAsync();
             return NoContent();
         }
+
         private bool CrewExists(long id)
         {
-            return (_context.Crews?.Any(crew => crew.CrewId == id)).GetValueOrDefault();
+            return (Context.Crews?.Any(crew => crew.CrewId == id)).GetValueOrDefault();
         }
 
     }

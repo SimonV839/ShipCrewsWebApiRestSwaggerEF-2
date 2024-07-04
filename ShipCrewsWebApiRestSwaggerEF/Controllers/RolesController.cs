@@ -8,35 +8,34 @@ namespace ShipCrewsWebApiRestSwaggerEF.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class RolesController : ControllerBase
+    public class RolesController : ShipCrewsControllerBase<RolesController>
     {
-        private readonly ShipCrewsContext _context;
-
-        public RolesController(ShipCrewsContext context)
+        public RolesController(ILogger<RolesController> logger, ShipCrewsContext context)
+            : base(logger, context)
         {
-            _context = context;
         }
 
         // Get : api/Roles
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Role>>> GetRole()
         {
-            if (_context.Roles == null)
+            if (Context.Roles == null)
             {
+                Logger.LogError("{func} called but there is no {table} table", nameof(GetRole), nameof(Context.Roles));
                 return NotFound();
             }
-            return await _context.Roles.ToListAsync();
+            return await Context.Roles.ToListAsync();
         }
 
         // Get : api/Roles/2
         [HttpGet("{id}")]
         public async Task<ActionResult<Role>> GetRole(int id)
         {
-            if (_context.Roles is null)
+            if (Context.Roles is null)
             {
                 return NotFound();
             }
-            var role = await _context.Roles.FindAsync(id);
+            var role = await Context.Roles.FindAsync(id);
             if (role is null)
             {
                 return NotFound();

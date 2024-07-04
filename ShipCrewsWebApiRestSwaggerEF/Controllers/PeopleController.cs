@@ -6,26 +6,25 @@ namespace ShipCrewsWebApiRestSwaggerEF.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class PeopleController : ControllerBase
+    public class PeopleController : ShipCrewsControllerBase<PeopleController>
     {
-        private readonly ShipCrewsContext _context;
-
-        public PeopleController(ShipCrewsContext context)
+        public PeopleController(ILogger<PeopleController> logger, ShipCrewsContext context)
+            : base(logger, context)
         {
-            _context = context;
         }
 
         // Get : api/People
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Person>>> GetPeople()
         {
-            if (_context.People == null)
+            if (Context.People == null)
             {
+                Logger.LogError("{func} called but there is no {table} table", nameof(GetPeople), nameof(Context.People));
                 return NotFound();
             }
-            return await _context.People.ToListAsync();
+            return await Context.People.ToListAsync();
             /* generates exception
-            var shipCrewsContext = _context.People.Include(p => p.Role).Skip(7);
+            var shipCrewsContext = Context.People.Include(p => p.Role).Skip(7);
             var first = shipCrewsContext.First();
             return await shipCrewsContext.ToListAsync();
             */
@@ -35,13 +34,15 @@ namespace ShipCrewsWebApiRestSwaggerEF.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Person>> GetPeople(int id)
         {
-            if (_context.People is null)
+            if (Context.People is null)
             {
+                Logger.LogError("{func} called with {id} but there is no {table} table", nameof(GetPeople), id, nameof(Context.People));
                 return NotFound();
             }
-            var person = await _context.People.FindAsync(id);
+            var person = await Context.People.FindAsync(id);
             if (person is null)
             {
+                Logger.LogInformation("{func} called with {id} but this is not present in {table} table", nameof(GetPeople), id, nameof(Context.People));
                 return NotFound();
             }
             return person;
@@ -51,8 +52,8 @@ namespace ShipCrewsWebApiRestSwaggerEF.Controllers
         [HttpPost]
         public async Task<ActionResult<Person>> PostPeople(Person person)
         {
-            _context.People.Add(person);
-            await _context.SaveChangesAsync();
+            Context.People.Add(person);
+            await Context.SaveChangesAsync();
             return CreatedAtAction(nameof(PostPeople), new { id = person.PersonId }, person);
         }
 
@@ -62,16 +63,21 @@ namespace ShipCrewsWebApiRestSwaggerEF.Controllers
         {
             if (id != person.PersonId)
             {
+                Logger.LogError("{func} called with {id} but this does match the value supplied in {person}", nameof(PutPerson), id, person);
                 return BadRequest();
             }
-            _context.Entry(person).State = EntityState.Modified;
+            Context.Entry(person).State = EntityState.Modified;
             try
             {
-                await _context.SaveChangesAsync();
+                await Context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!PersonExists(id)) { return NotFound(); }
+                if (!PersonExists(id)) 
+                {
+                    Logger.LogWarning("{func} called with {id} but an item with this id does not exist", nameof(PutPerson), id);
+                    return NotFound(); 
+                }
                 else { throw; }
             }
             return NoContent();
@@ -81,29 +87,31 @@ namespace ShipCrewsWebApiRestSwaggerEF.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<Person>> DeletePerson(int id)
         {
-            if (_context.People is null)
+            if (Context.People is null)
             {
+                Logger.LogError("{func} called with {id} but there is no {table} table", nameof(DeletePerson), id, nameof(Context.People));
                 return NotFound();
             }
-            var person = await _context.People.FindAsync(id);
+            var person = await Context.People.FindAsync(id);
             if (person is null)
             {
+                Logger.LogWarning("{func} called with {id} but an item with this id does not exist", nameof(DeletePerson), id);
                 return NotFound();
             }
-            _context.People.Remove(person);
-            await _context.SaveChangesAsync();
+            Context.People.Remove(person);
+            await Context.SaveChangesAsync();
             return NoContent();
         }
         private bool PersonExists(long id)
         {
-            return (_context.People?.Any(person => person.PersonId == id)).GetValueOrDefault();
+            return (Context.People?.Any(person => person.PersonId == id)).GetValueOrDefault();
         }
         /*
         // GET: People
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Person>>> Index()
         {
-            var shipCrewsContext = _context.People.Include(p => p.Role);
+            var shipCrewsContext = Context.People.Include(p => p.Role);
             return await shipCrewsContext.ToListAsync();
         }
 
@@ -115,7 +123,7 @@ namespace ShipCrewsWebApiRestSwaggerEF.Controllers
                 return NotFound();
             }
 
-            var person = await _context.People
+            var person = await Context.People
                 .Include(p => p.Role)
                 .FirstOrDefaultAsync(m => m.PersonId == id);
             if (person == null)
@@ -129,7 +137,7 @@ namespace ShipCrewsWebApiRestSwaggerEF.Controllers
         // GET: People/Create
         public IActionResult Create()
         {
-            ViewData["RoleId"] = new SelectList(_context.Roles, "RoleId", "RoleId");
+            ViewData["RoleId"] = new SelectList(Context.Roles, "RoleId", "RoleId");
             return View();
         }
 
@@ -142,11 +150,11 @@ namespace ShipCrewsWebApiRestSwaggerEF.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(person);
-                await _context.SaveChangesAsync();
+                Context.Add(person);
+                await Context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["RoleId"] = new SelectList(_context.Roles, "RoleId", "RoleId", person.RoleId);
+            ViewData["RoleId"] = new SelectList(Context.Roles, "RoleId", "RoleId", person.RoleId);
             return View(person);
         }
 
@@ -158,12 +166,12 @@ namespace ShipCrewsWebApiRestSwaggerEF.Controllers
                 return NotFound();
             }
 
-            var person = await _context.People.FindAsync(id);
+            var person = await Context.People.FindAsync(id);
             if (person == null)
             {
                 return NotFound();
             }
-            ViewData["RoleId"] = new SelectList(_context.Roles, "RoleId", "RoleId", person.RoleId);
+            ViewData["RoleId"] = new SelectList(Context.Roles, "RoleId", "RoleId", person.RoleId);
             return View(person);
         }
 
@@ -183,8 +191,8 @@ namespace ShipCrewsWebApiRestSwaggerEF.Controllers
             {
                 try
                 {
-                    _context.Update(person);
-                    await _context.SaveChangesAsync();
+                    Context.Update(person);
+                    await Context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -199,7 +207,7 @@ namespace ShipCrewsWebApiRestSwaggerEF.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["RoleId"] = new SelectList(_context.Roles, "RoleId", "RoleId", person.RoleId);
+            ViewData["RoleId"] = new SelectList(Context.Roles, "RoleId", "RoleId", person.RoleId);
             return View(person);
         }
 
@@ -211,7 +219,7 @@ namespace ShipCrewsWebApiRestSwaggerEF.Controllers
                 return NotFound();
             }
 
-            var person = await _context.People
+            var person = await Context.People
                 .Include(p => p.Role)
                 .FirstOrDefaultAsync(m => m.PersonId == id);
             if (person == null)
@@ -227,19 +235,19 @@ namespace ShipCrewsWebApiRestSwaggerEF.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var person = await _context.People.FindAsync(id);
+            var person = await Context.People.FindAsync(id);
             if (person != null)
             {
-                _context.People.Remove(person);
+                Context.People.Remove(person);
             }
 
-            await _context.SaveChangesAsync();
+            await Context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool PersonExists(int id)
         {
-            return _context.People.Any(e => e.PersonId == id);
+            return Context.People.Any(e => e.PersonId == id);
         }
         */
     }

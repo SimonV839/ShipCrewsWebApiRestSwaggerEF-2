@@ -8,32 +8,26 @@ namespace ShipCrewsWebApiRestSwaggerEF.Controllers
 
     [Route("api/[controller]")]
     [ApiController]
-    public class CrewMembersController : ControllerBase
+    public class CrewMembersController : ShipCrewsControllerBase<CrewMembersController>
     {
-        private readonly ShipCrewsContext _context;
-
-        public CrewMembersController(ShipCrewsContext context)
+        public CrewMembersController(ILogger<CrewMembersController> logger, ShipCrewsContext context)
+            : base(logger, context)
         {
-            _context = context;
         }
 
         // Get : api/CrewMembers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<CrewMembers>>> GetRole()
         {
-            if (_context.CrewAssignments == null)
+            if (Context.CrewAssignments == null)
             {
+                Logger.LogError("{func} called but there is no {table} table", nameof(GetRole), nameof(Context.CrewAssignments));
                 return NotFound();
             }
 
-            var assignments = await _context.CrewAssignments.Select(x => new { Index = x.CrewId, Value = x.PersonId }).
+            var assignments = await Context.CrewAssignments.Select(x => new { Index = x.CrewId, Value = x.PersonId }).
                 GroupBy(x => x.Index).
                 ToListAsync();
-
-            if (!assignments.Any())
-            {
-                return NotFound();
-            }
 
             var crews = new List<CrewMembers>();
 
@@ -49,14 +43,16 @@ namespace ShipCrewsWebApiRestSwaggerEF.Controllers
         [HttpGet("{crewId}")]
         public async Task<ActionResult<CrewMembers>> GetCrewMembers(int crewId)
         {
-            if (_context.CrewAssignments == null)
+            if (Context.CrewAssignments == null)
             {
+                Logger.LogError("{func} called but there is no {table} table", nameof(GetCrewMembers), nameof(Context.CrewAssignments));
                 return NotFound();
             }
 
-            var members = await _context.CrewAssignments.Where(c => c.CrewId == crewId).Select(i => i.PersonId ?? -1).ToListAsync();
+            var members = await Context.CrewAssignments.Where(c => c.CrewId == crewId).Select(i => i.PersonId ?? -1).ToListAsync();
             if (!members.Any())
             {
+                Logger.LogInformation("{func} called with {id} but this is not present in {table} table", nameof(GetCrewMembers), crewId, nameof(Context.CrewAssignments));
                 return NotFound();
             }
 
@@ -69,29 +65,29 @@ namespace ShipCrewsWebApiRestSwaggerEF.Controllers
         {
             var orderedMembers = members.Distinct().Order().ToList();
 
-            var foundAssignments = await _context.CrewAssignments.Where(c => c.CrewId == crewId).ToListAsync();
+            var foundAssignments = await Context.CrewAssignments.Where(c => c.CrewId == crewId).ToListAsync();
             if (!foundAssignments.Any())
             {
+                Logger.LogInformation("{func} called with {crewId} but this is not present in {table} table", nameof(PutCrewMembers), crewId, nameof(Context.CrewAssignments));
                 return NotFound();
             }
 
             var toDelete = foundAssignments.Where(a => !orderedMembers.Contains(a.PersonId ?? -1));
             foreach(var mem in toDelete)
             {
-                _context.CrewAssignments.Remove(mem);
+                Context.CrewAssignments.Remove(mem);
             }
 
             var foundPersonIds = foundAssignments.Select(s => s.PersonId).ToList();
             var notPresent = orderedMembers.Where(a => !foundPersonIds.Contains(a));
             foreach(var mem in notPresent)
             {
-                await _context.CrewAssignments.AddAsync(new CrewAssignment { CrewId = crewId, PersonId = mem});
+                await Context.CrewAssignments.AddAsync(new CrewAssignment { CrewId = crewId, PersonId = mem});
             }
 
-            await _context.SaveChangesAsync();
+            await Context.SaveChangesAsync();
 
             return new CrewMembers { CrewId = crewId, Members = orderedMembers };
         }
-
     }
 }

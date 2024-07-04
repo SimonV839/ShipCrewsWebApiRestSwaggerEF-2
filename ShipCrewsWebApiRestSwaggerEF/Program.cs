@@ -1,31 +1,52 @@
+using LoggingHelpers;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 using ShipCrewsWebApiRestSwaggerEF.Models;
 
-var builder = WebApplication.CreateBuilder(args);
+Log.Logger = new LoggerConfiguration()
+    .ConfigureBasic()
+    .ConfigureMinLoggingLevel()
+    .ConfigureWriteToDefaultFile()
+    .ConfigureWriteToConsole()
+    .CreateLogger();
+Log.Logger.Information("Starting");
 
-// Add services to the container.
-
-builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-
-builder.Services.AddDbContext<ShipCrewsContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("ShipCrewsContext")));
-
-var app = builder.Build();
-
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+try
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    var builder = WebApplication.CreateBuilder(args);
+
+    //builder.Services.AddSerilog(); // causes double outputs to console
+    builder.Host.UseSerilog();
+
+    builder.Services.AddControllers();
+    builder.Services.AddEndpointsApiExplorer();
+    builder.Services.AddSwaggerGen();
+    builder.Services.AddDbContext<ShipCrewsContext>(options =>
+        options.UseSqlServer(builder.Configuration.GetConnectionString("ShipCrewsContext")));
+
+    var app = builder.Build();
+
+    if (app.Environment.IsDevelopment())
+    {
+        app.UseSwagger();
+        app.UseSwaggerUI();
+    }
+
+    app.UseHttpsRedirection();
+
+    app.UseAuthorization();
+
+    app.MapControllers();
+
+    app.Run();
+}
+catch (Exception ex)
+{
+    Log.Fatal(ex, "Application terminated unexpectedly");
+}
+finally
+{
+    //Log.Logger.Information("Finished");   //  too late for any logging
+    Log.CloseAndFlush();
 }
 
-app.UseHttpsRedirection();
-
-app.UseAuthorization();
-
-app.MapControllers();
-
-app.Run();
