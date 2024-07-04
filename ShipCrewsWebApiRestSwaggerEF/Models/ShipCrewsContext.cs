@@ -33,9 +33,8 @@ public partial class ShipCrewsContext : DbContext
     {
         modelBuilder.Entity<Crew>(entity =>
         {
-            entity.HasKey(e => e.CrewId).HasName("PK__Crews__89BCFC294DCBC610");
+            entity.HasKey(e => e.CrewId).HasName("PK__Crews__89BCFC294A8F2954");
 
-            entity.Property(e => e.CrewId).ValueGeneratedNever();
             entity.Property(e => e.Name)
                 .HasMaxLength(50)
                 .IsUnicode(false);
@@ -43,7 +42,7 @@ public partial class ShipCrewsContext : DbContext
 
         modelBuilder.Entity<CrewAssignment>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__CrewAssi__3214EC076CBB95A3");
+            entity.HasKey(e => e.Id).HasName("PK__CrewAssi__3214EC07A9D029C5");
 
             entity.HasIndex(e => new { e.CrewId, e.PersonId }, "CK_CrewAssignments_Unique").IsUnique();
 
@@ -68,9 +67,8 @@ public partial class ShipCrewsContext : DbContext
 
         modelBuilder.Entity<Person>(entity =>
         {
-            entity.HasKey(e => e.PersonId).HasName("PK__People__AA2FFBE52719AECD");
+            entity.HasKey(e => e.PersonId).HasName("PK__People__AA2FFBE59C24CE43");
 
-            entity.Property(e => e.PersonId).ValueGeneratedNever();
             entity.Property(e => e.FirstName).HasMaxLength(50);
             entity.Property(e => e.LastName).HasMaxLength(50);
 
@@ -81,7 +79,7 @@ public partial class ShipCrewsContext : DbContext
 
         modelBuilder.Entity<Role>(entity =>
         {
-            entity.HasKey(e => e.RoleId).HasName("PK__Roles__8AFACE1A87B6C17A");
+            entity.HasKey(e => e.RoleId).HasName("PK__Roles__8AFACE1AB054259F");
 
             entity.Property(e => e.RoleId).ValueGeneratedNever();
             entity.Property(e => e.Name)
