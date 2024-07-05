@@ -33,7 +33,9 @@ public partial class ShipCrewsContext : DbContext
     {
         modelBuilder.Entity<Crew>(entity =>
         {
-            entity.HasKey(e => e.CrewId).HasName("PK__Crews__89BCFC294A8F2954");
+            entity.HasKey(e => e.CrewId).HasName("PK__Crews__89BCFC2926394403");
+
+            entity.HasIndex(e => e.Name, "UQ__Crews__737584F663B715FD").IsUnique();
 
             entity.Property(e => e.Name)
                 .HasMaxLength(50)
@@ -42,17 +44,17 @@ public partial class ShipCrewsContext : DbContext
 
         modelBuilder.Entity<CrewAssignment>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__CrewAssi__3214EC07A9D029C5");
+            entity.HasKey(e => e.Id).HasName("PK__CrewAssi__3214EC076DFAEC58");
 
             entity.HasIndex(e => new { e.CrewId, e.PersonId }, "CK_CrewAssignments_Unique").IsUnique();
 
             entity.HasOne(d => d.Crew).WithMany(p => p.CrewAssignments)
                 .HasForeignKey(d => d.CrewId)
-                .HasConstraintName("FK__CrewAssig__CrewI__3F466844");
+                .HasConstraintName("FK__CrewAssig__CrewI__403A8C7D");
 
             entity.HasOne(d => d.Person).WithMany(p => p.CrewAssignments)
                 .HasForeignKey(d => d.PersonId)
-                .HasConstraintName("FK__CrewAssig__Perso__403A8C7D");
+                .HasConstraintName("FK__CrewAssig__Perso__412EB0B6");
         });
 
         modelBuilder.Entity<NeverAssignedPerson>(entity =>
@@ -67,19 +69,19 @@ public partial class ShipCrewsContext : DbContext
 
         modelBuilder.Entity<Person>(entity =>
         {
-            entity.HasKey(e => e.PersonId).HasName("PK__People__AA2FFBE59C24CE43");
+            entity.HasKey(e => e.PersonId).HasName("PK__People__AA2FFBE52555D25E");
 
             entity.Property(e => e.FirstName).HasMaxLength(50);
             entity.Property(e => e.LastName).HasMaxLength(50);
 
             entity.HasOne(d => d.Role).WithMany(p => p.People)
                 .HasForeignKey(d => d.RoleId)
-                .HasConstraintName("FK__People__RoleId__3B75D760");
+                .HasConstraintName("FK__People__RoleId__3C69FB99");
         });
 
         modelBuilder.Entity<Role>(entity =>
         {
-            entity.HasKey(e => e.RoleId).HasName("PK__Roles__8AFACE1AB054259F");
+            entity.HasKey(e => e.RoleId).HasName("PK__Roles__8AFACE1A242202A3");
 
             entity.Property(e => e.RoleId).ValueGeneratedNever();
             entity.Property(e => e.Name)

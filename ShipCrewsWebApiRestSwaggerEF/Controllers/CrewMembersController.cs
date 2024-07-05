@@ -87,7 +87,7 @@ namespace ShipCrewsWebApiRestSwaggerEF.Controllers
 
             await Context.SaveChangesAsync();
 
-            return new CrewMembers { CrewId = crewId, Members = orderedMembers };
+            return NoContent();
         }
     }
 }
