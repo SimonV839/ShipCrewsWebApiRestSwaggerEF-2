@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using ShipCrewsWebApiRestSwaggerEF.HackedModels;
 using ShipCrewsWebApiRestSwaggerEF.Models;
 
 namespace ShipCrewsWebApiRestSwaggerEF.Controllers
@@ -15,19 +16,21 @@ namespace ShipCrewsWebApiRestSwaggerEF.Controllers
 
         // Get : api/Crews
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Crew>>> GetCrew()
+        public async Task<ActionResult<IEnumerable<CrewHacked>>> GetCrew()
         {
             if (Context.Crews == null)
             {
                 Logger.LogError(@"{func} called but there is no {table} table", nameof(GetCrew), nameof(Context.Crews));
                 return NotFound();
             }
-            return await Context.Crews.ToListAsync();
+
+            var efCrews = await Context.Crews.ToListAsync();
+            return efCrews.Select(ef => new CrewHacked(ef)).ToList();
         }
 
         // Get : api/Crews/2
         [HttpGet("{id}")]
-        public async Task<ActionResult<Crew>> GetCrew(int id)
+        public async Task<ActionResult<CrewHacked>> GetCrew(int id)
         {
             if (Context.Crews is null)
             {
@@ -40,28 +43,38 @@ namespace ShipCrewsWebApiRestSwaggerEF.Controllers
                 Logger.LogInformation(@"{func} called with {id} but this is not present in {table} table", nameof(GetCrew), id, nameof(Context.Crews));
                 return NotFound();
             }
-            return crew;
+            return new CrewHacked(crew);
         }
 
         // Post : api/Crews
         [HttpPost]
-        public async Task<ActionResult<Crew>> PostCrew(Crew crew)
+        public async Task<ActionResult<CrewHacked>> PostCrew(CrewHacked crew)
         {
-            Context.Crews.Add(crew);
+            var efCrew = crew.ToCrew();
+            Context.Crews.Add(efCrew);
             await Context.SaveChangesAsync();
-            return CreatedAtAction(nameof(PostCrew), new { id = crew.CrewId }, crew);
+            return CreatedAtAction(nameof(PostCrew), new { id = efCrew.CrewId }, new CrewHacked(efCrew));
         }
 
         // Put : api/Crews/2
         [HttpPut]
-        public async Task<ActionResult<Crew>> PutCrew(int id, Crew crew)
+        public async Task<ActionResult<CrewHacked>> PutCrew(int id, CrewHacked crew)
         {
             if (id != crew.CrewId)
             {
                 Logger.LogError(@"{func} called with {id} but this does match the value supplied in {crew}", nameof(PutCrew), id, crew);
                 return BadRequest();
             }
-            Context.Entry(crew).State = EntityState.Modified;
+            var efCrew = await Context.Crews.FindAsync(id);
+            if (efCrew is null)
+            {
+                Logger.LogWarning(@"{func} called with {id} but an item with this id does not exist", nameof(PutCrew), id);
+                return NotFound();
+            }
+            // Simon: this will geneate an error
+            //efCrew = crew.ToCrew();
+            crew.Update(efCrew);
+            Context.Entry(efCrew).State = EntityState.Modified;
             try
             {
                 await Context.SaveChangesAsync();
@@ -80,7 +93,7 @@ namespace ShipCrewsWebApiRestSwaggerEF.Controllers
 
         // Delete : api/Crews/2
         [HttpDelete("{id}")]
-        public async Task<ActionResult<Crew>> DeleteCrew(int id)
+        public async Task<ActionResult<CrewHacked>> DeleteCrew(int id)
         {
             if (Context.Crews is null)
             {

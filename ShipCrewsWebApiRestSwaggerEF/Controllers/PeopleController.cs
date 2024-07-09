@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using ShipCrewsWebApiRestSwaggerEF.HackedModels;
 using ShipCrewsWebApiRestSwaggerEF.Models;
 
 namespace ShipCrewsWebApiRestSwaggerEF.Controllers
@@ -15,24 +16,20 @@ namespace ShipCrewsWebApiRestSwaggerEF.Controllers
 
         // Get : api/People
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Person>>> GetPeople()
+        public async Task<ActionResult<IEnumerable<PersonHacked>>> GetPeople()
         {
             if (Context.People == null)
             {
                 Logger.LogError(@"{func} called but there is no {table} table", nameof(GetPeople), nameof(Context.People));
                 return NotFound();
             }
-            return await Context.People.ToListAsync();
-            /* generates exception
-            var shipCrewsContext = Context.People.Include(p => p.Role).Skip(7);
-            var first = shipCrewsContext.First();
-            return await shipCrewsContext.ToListAsync();
-            */
+            var efPeople = await Context.People.ToListAsync();
+            return efPeople.Select(ef => new PersonHacked(ef)).ToList();
         }
 
         // Get : api/People/2
         [HttpGet("{id}")]
-        public async Task<ActionResult<Person>> GetPeople(int id)
+        public async Task<ActionResult<PersonHacked>> GetPeople(int id)
         {
             if (Context.People is null)
             {
@@ -45,28 +42,36 @@ namespace ShipCrewsWebApiRestSwaggerEF.Controllers
                 Logger.LogInformation(@"{func} called with {id} but this is not present in {table} table", nameof(GetPeople), id, nameof(Context.People));
                 return NotFound();
             }
-            return person;
+            return new PersonHacked(person);
         }
 
         // Post : api/People
         [HttpPost]
-        public async Task<ActionResult<Person>> PostPeople(Person person)
+        public async Task<ActionResult<PersonHacked>> PostPeople(PersonHacked person)
         {
-            Context.People.Add(person);
+            var efPerson = person.ToPerson();
+            Context.People.Add(efPerson);
             await Context.SaveChangesAsync();
-            return CreatedAtAction(nameof(PostPeople), new { id = person.PersonId }, person);
+            return CreatedAtAction(nameof(PostPeople), new { id = efPerson.PersonId }, new PersonHacked(efPerson));
         }
 
         // Put : api/People/2
         [HttpPut]
-        public async Task<ActionResult<Person>> PutPerson(int id, Person person)
+        public async Task<ActionResult<PersonHacked>> PutPerson(int id, PersonHacked person)
         {
             if (id != person.PersonId)
             {
                 Logger.LogError(@"{func} called with {id} but this does match the value supplied in {person}", nameof(PutPerson), id, person);
                 return BadRequest();
             }
-            Context.Entry(person).State = EntityState.Modified;
+            var efPerson = await Context.People.FindAsync(id);
+            if (efPerson is null)
+            {
+                Logger.LogWarning(@"{func} called with {id} but an item with this id does not exist", nameof(PutPerson), id);
+                return NotFound();
+            }
+            person.Update(efPerson);
+            Context.Entry(efPerson).State = EntityState.Modified;
             try
             {
                 await Context.SaveChangesAsync();

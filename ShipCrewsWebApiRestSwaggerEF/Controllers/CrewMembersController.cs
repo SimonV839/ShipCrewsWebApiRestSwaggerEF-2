@@ -56,7 +56,7 @@ namespace ShipCrewsWebApiRestSwaggerEF.Controllers
                 return NotFound();
             }
 
-            return new CrewMembers { CrewId = 1, Members = members };
+            return new CrewMembers { CrewId = crewId, Members = members };
         }
 
         // Put : api/CrewMembers/2

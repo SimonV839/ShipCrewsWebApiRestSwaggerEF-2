@@ -26,3 +26,8 @@ Note: EF requires any handled value to have a primary key (i.e. CrewAssignments 
 6) Populate PeopleController
 
 ...
+
+7) The EF created models contain more information than required. Eg Person contains Role (as well as RoleId)
+	which is set to null. This causes a problem when referencing this API.
+	As a hack (Simon: do not yet know what the proper solution is), create the HackedModels which are
+	the models but with the minimum of fields (ie those in the db).

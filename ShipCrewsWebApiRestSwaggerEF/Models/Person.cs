@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace ShipCrewsWebApiRestSwaggerEF.Models;
+﻿namespace ShipCrewsWebApiRestSwaggerEF.Models;
 
 public partial class Person
 {

@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using ShipCrewsWebApiRestSwaggerEF.HackedModels;
 using ShipCrewsWebApiRestSwaggerEF.Models;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -17,19 +18,21 @@ namespace ShipCrewsWebApiRestSwaggerEF.Controllers
 
         // Get : api/Roles
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Role>>> GetRole()
+        public async Task<ActionResult<IEnumerable<RoleHacked>>> GetRole()
         {
             if (Context.Roles == null)
             {
                 Logger.LogError(@"{func} called but there is no {table} table", nameof(GetRole), nameof(Context.Roles));
                 return NotFound();
             }
-            return await Context.Roles.ToListAsync();
+
+            var efRoles = await Context.Roles.ToListAsync();
+            return efRoles.Select(ef => new RoleHacked(ef)).ToList();
         }
 
         // Get : api/Roles/2
         [HttpGet("{id}")]
-        public async Task<ActionResult<Role>> GetRole(int id)
+        public async Task<ActionResult<RoleHacked>> GetRole(int id)
         {
             if (Context.Roles is null)
             {
@@ -38,9 +41,10 @@ namespace ShipCrewsWebApiRestSwaggerEF.Controllers
             var role = await Context.Roles.FindAsync(id);
             if (role is null)
             {
+                Logger.LogInformation(@"{func} called with {id} but this is not present in {table} table", nameof(GetRole), id, nameof(Context.Roles));
                 return NotFound();
             }
-            return role;
+            return new RoleHacked(role);
         }
     }
 }
