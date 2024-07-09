@@ -19,7 +19,7 @@ namespace ShipCrewsWebApiRestSwaggerEF.Controllers
         {
             if (Context.Crews == null)
             {
-                Logger.LogError("{func} called but there is no {table} table", nameof(GetCrew), nameof(Context.Crews));
+                Logger.LogError(@"{func} called but there is no {table} table", nameof(GetCrew), nameof(Context.Crews));
                 return NotFound();
             }
             return await Context.Crews.ToListAsync();
@@ -31,13 +31,13 @@ namespace ShipCrewsWebApiRestSwaggerEF.Controllers
         {
             if (Context.Crews is null)
             {
-                Logger.LogError("{func} called with {id} but there is no {table} table", nameof(GetCrew), id, nameof(Context.Crews));
+                Logger.LogError(@"{func} called with {id} but there is no {table} table", nameof(GetCrew), id, nameof(Context.Crews));
                 return NotFound();
             }
             var crew = await Context.Crews.FindAsync(id);
             if (crew is null)
             {
-                Logger.LogInformation("{func} called with {id} but this is not present in {table} table", nameof(GetCrew), id, nameof(Context.Crews));
+                Logger.LogInformation(@"{func} called with {id} but this is not present in {table} table", nameof(GetCrew), id, nameof(Context.Crews));
                 return NotFound();
             }
             return crew;
@@ -58,7 +58,7 @@ namespace ShipCrewsWebApiRestSwaggerEF.Controllers
         {
             if (id != crew.CrewId)
             {
-                Logger.LogError("{func} called with {id} but this does match the value supplied in {crew}", nameof(PutCrew), id, crew);
+                Logger.LogError(@"{func} called with {id} but this does match the value supplied in {crew}", nameof(PutCrew), id, crew);
                 return BadRequest();
             }
             Context.Entry(crew).State = EntityState.Modified;
@@ -70,7 +70,7 @@ namespace ShipCrewsWebApiRestSwaggerEF.Controllers
             {
                 if (!CrewExists(id)) 
                 {
-                    Logger.LogWarning("{func} called with {id} but an item with this id does not exist", nameof(PutCrew), id);
+                    Logger.LogWarning(@"{func} called with {id} but an item with this id does not exist", nameof(PutCrew), id);
                     return NotFound(); 
                 }
                 else { throw; }
@@ -84,13 +84,13 @@ namespace ShipCrewsWebApiRestSwaggerEF.Controllers
         {
             if (Context.Crews is null)
             {
-                Logger.LogError("{func} called with {id} but there is no {table} table", nameof(DeleteCrew), id, nameof(Context.Crews));
+                Logger.LogError(@"{func} called with {id} but there is no {table} table", nameof(DeleteCrew), id, nameof(Context.Crews));
                 return NotFound();
             }
             var crew = await Context.Crews.FindAsync(id);
             if (crew is null)
             {
-                Logger.LogWarning("{func} called with {id} but an item with this id does not exist", nameof(DeleteCrew), id);
+                Logger.LogWarning(@"{func} called with {id} but an item with this id does not exist", nameof(DeleteCrew), id);
                 return NotFound();
             }
             Context.Crews.Remove(crew);

@@ -21,7 +21,7 @@ namespace ShipCrewsWebApiRestSwaggerEF.Controllers
         {
             if (Context.Roles == null)
             {
-                Logger.LogError("{func} called but there is no {table} table", nameof(GetRole), nameof(Context.Roles));
+                Logger.LogError(@"{func} called but there is no {table} table", nameof(GetRole), nameof(Context.Roles));
                 return NotFound();
             }
             return await Context.Roles.ToListAsync();

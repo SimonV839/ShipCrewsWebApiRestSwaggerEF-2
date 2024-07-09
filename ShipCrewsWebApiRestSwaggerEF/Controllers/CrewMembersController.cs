@@ -21,7 +21,7 @@ namespace ShipCrewsWebApiRestSwaggerEF.Controllers
         {
             if (Context.CrewAssignments == null)
             {
-                Logger.LogError("{func} called but there is no {table} table", nameof(GetRole), nameof(Context.CrewAssignments));
+                Logger.LogError(@"{func} called but there is no {table} table", nameof(GetRole), nameof(Context.CrewAssignments));
                 return NotFound();
             }
 
@@ -45,14 +45,14 @@ namespace ShipCrewsWebApiRestSwaggerEF.Controllers
         {
             if (Context.CrewAssignments == null)
             {
-                Logger.LogError("{func} called but there is no {table} table", nameof(GetCrewMembers), nameof(Context.CrewAssignments));
+                Logger.LogError(@"{func} called but there is no {table} table", nameof(GetCrewMembers), nameof(Context.CrewAssignments));
                 return NotFound();
             }
 
             var members = await Context.CrewAssignments.Where(c => c.CrewId == crewId).Select(i => i.PersonId ?? -1).ToListAsync();
             if (!members.Any())
             {
-                Logger.LogInformation("{func} called with {id} but this is not present in {table} table", nameof(GetCrewMembers), crewId, nameof(Context.CrewAssignments));
+                Logger.LogInformation(@"{func} called with {id} but this is not present in {table} table", nameof(GetCrewMembers), crewId, nameof(Context.CrewAssignments));
                 return NotFound();
             }
 
@@ -68,7 +68,7 @@ namespace ShipCrewsWebApiRestSwaggerEF.Controllers
             var foundAssignments = await Context.CrewAssignments.Where(c => c.CrewId == crewId).ToListAsync();
             if (!foundAssignments.Any())
             {
-                Logger.LogInformation("{func} called with {crewId} but this is not present in {table} table", nameof(PutCrewMembers), crewId, nameof(Context.CrewAssignments));
+                Logger.LogInformation(@"{func} called with {crewId} but this is not present in {table} table", nameof(PutCrewMembers), crewId, nameof(Context.CrewAssignments));
                 return NotFound();
             }
 
