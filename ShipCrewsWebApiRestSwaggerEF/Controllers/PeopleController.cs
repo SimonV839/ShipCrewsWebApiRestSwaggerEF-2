@@ -47,11 +47,16 @@ namespace ShipCrewsWebApiRestSwaggerEF.Controllers
 
         // Post : api/People
         [HttpPost]
+        // Simon: the auto generated code for this as a referenced service
+        // will check for 200 without this
+        [ProducesResponseType(StatusCodes.Status201Created)]
         public async Task<ActionResult<PersonHacked>> PostPeople(PersonHacked person)
         {
             var efPerson = person.ToPerson();
             Context.People.Add(efPerson);
             await Context.SaveChangesAsync();
+            Logger.LogInformation("{PostPeople} success. Returning CreatedAtAction with id: {efPerson.PersonId}, person: {efPerson}", 
+                nameof(PostPeople), efPerson.PersonId, efPerson);
             return CreatedAtAction(nameof(PostPeople), new { id = efPerson.PersonId }, new PersonHacked(efPerson));
         }
 
