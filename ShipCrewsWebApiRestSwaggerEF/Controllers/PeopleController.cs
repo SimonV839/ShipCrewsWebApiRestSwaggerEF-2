@@ -62,6 +62,8 @@ namespace ShipCrewsWebApiRestSwaggerEF.Controllers
 
         // Put : api/People/2
         [HttpPut]
+        // Simon
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         public async Task<ActionResult<PersonHacked>> PutPerson(int id, PersonHacked person)
         {
             if (id != person.PersonId)
@@ -95,6 +97,8 @@ namespace ShipCrewsWebApiRestSwaggerEF.Controllers
 
         // Delete : api/People/2
         [HttpDelete("{id}")]
+        // Simon
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         public async Task<ActionResult<Person>> DeletePerson(int id)
         {
             if (Context.People is null)
