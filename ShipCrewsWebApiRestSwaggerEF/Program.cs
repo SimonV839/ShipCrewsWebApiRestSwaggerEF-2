@@ -1,4 +1,4 @@
-using LoggingHelpers;
+using SimonV839.LoggingHelpers;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 using ShipCrewsWebApiRestSwaggerEF.Models;
