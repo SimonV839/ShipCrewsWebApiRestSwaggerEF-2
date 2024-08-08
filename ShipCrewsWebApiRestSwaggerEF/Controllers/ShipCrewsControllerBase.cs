@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using ShipCrewsWebApiRestSwaggerEF.Models;
+using SimonV839.ShipCrewsWebApiRestSwaggerEF.Models;
 
-namespace ShipCrewsWebApiRestSwaggerEF.Controllers
+namespace SimonV839.ShipCrewsWebApiRestSwaggerEF.Controllers
 {
     public class ShipCrewsControllerBase<T> : ControllerBase
     {

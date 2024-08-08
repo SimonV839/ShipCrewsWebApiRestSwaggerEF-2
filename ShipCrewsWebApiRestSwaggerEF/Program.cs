@@ -1,7 +1,7 @@
 using SimonV839.LoggingHelpers;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
-using ShipCrewsWebApiRestSwaggerEF.Models;
+using SimonV839.ShipCrewsWebApiRestSwaggerEF.Models;
 
 Log.Logger = new LoggerConfiguration()
     .ConfigureBasic()

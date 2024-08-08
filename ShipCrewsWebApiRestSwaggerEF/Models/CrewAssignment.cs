@@ -1,4 +1,4 @@
-﻿namespace ShipCrewsWebApiRestSwaggerEF.Models;
+﻿namespace SimonV839.ShipCrewsWebApiRestSwaggerEF.Models;
 
 public partial class CrewAssignment
 {

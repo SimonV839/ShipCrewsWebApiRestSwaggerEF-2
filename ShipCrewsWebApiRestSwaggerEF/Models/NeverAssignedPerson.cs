@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace ShipCrewsWebApiRestSwaggerEF.Models;
+namespace SimonV839.ShipCrewsWebApiRestSwaggerEF.Models;
 
 public partial class NeverAssignedPerson
 {

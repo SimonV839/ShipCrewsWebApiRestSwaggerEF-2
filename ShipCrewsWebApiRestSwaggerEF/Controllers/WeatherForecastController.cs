@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 
-namespace ShipCrewsWebApiRestSwaggerEF.Controllers
+namespace SimonV839.ShipCrewsWebApiRestSwaggerEF.Controllers
 {
     [ApiController]
     [Route("[controller]")]

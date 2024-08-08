@@ -1,11 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using ShipCrewsWebApiRestSwaggerEF.HackedModels;
-using ShipCrewsWebApiRestSwaggerEF.Models;
+using SimonV839.ShipCrewsWebApiRestSwaggerEF.HackedModels;
+using SimonV839.ShipCrewsWebApiRestSwaggerEF.Models;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
-namespace ShipCrewsWebApiRestSwaggerEF.Controllers
+namespace SimonV839.ShipCrewsWebApiRestSwaggerEF.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]

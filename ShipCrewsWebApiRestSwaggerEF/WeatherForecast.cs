@@ -1,4 +1,4 @@
-namespace ShipCrewsWebApiRestSwaggerEF
+namespace SimonV839.ShipCrewsWebApiRestSwaggerEF
 {
     public class WeatherForecast
     {

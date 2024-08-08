@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using ShipCrewsWebApiRestSwaggerEF.Models;
+using SimonV839.ShipCrewsWebApiRestSwaggerEF.Models;
 
-namespace ShipCrewsWebApiRestSwaggerEF.Controllers
+namespace SimonV839.ShipCrewsWebApiRestSwaggerEF.Controllers
 {
     //Simon: this does not map to a db single item
 

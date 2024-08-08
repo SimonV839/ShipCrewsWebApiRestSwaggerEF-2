@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using ShipCrewsWebApiRestSwaggerEF.HackedModels;
-using ShipCrewsWebApiRestSwaggerEF.Models;
+using SimonV839.ShipCrewsWebApiRestSwaggerEF.HackedModels;
+using SimonV839.ShipCrewsWebApiRestSwaggerEF.Models;
 
-namespace ShipCrewsWebApiRestSwaggerEF.Controllers
+namespace SimonV839.ShipCrewsWebApiRestSwaggerEF.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]

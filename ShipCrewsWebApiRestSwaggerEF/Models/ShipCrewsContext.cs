@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 
-namespace ShipCrewsWebApiRestSwaggerEF.Models;
+namespace SimonV839.ShipCrewsWebApiRestSwaggerEF.Models;
 
 public partial class ShipCrewsContext : DbContext
 {

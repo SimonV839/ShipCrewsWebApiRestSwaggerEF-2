@@ -1,6 +1,6 @@
-﻿using ShipCrewsWebApiRestSwaggerEF.Models;
+﻿using SimonV839.ShipCrewsWebApiRestSwaggerEF.Models;
 
-namespace ShipCrewsWebApiRestSwaggerEF.HackedModels
+namespace SimonV839.ShipCrewsWebApiRestSwaggerEF.HackedModels
 {
     public class CrewHacked
     {
