@@ -14,6 +14,9 @@ This uses the ShipCrews database (https://github.com/SimonV839/ShipCrews-2.git).
 
 EF requires any handled value to have a primary key (i.e. CrewAssignments could not use a composite primary key made of the fks).
 
+This does not use a scoped db context - so not thread safe (the project was for demonstrating REST / CRUD service). 
+An example of handling scoped db context in singleton services can be seen in https://github.com/SimonV839/MumsDiceGameAutho.
+
 ### Creation Notes
 1) ASP.NET Core Web api
 	note "Enable OpenAPI support" is ticked
